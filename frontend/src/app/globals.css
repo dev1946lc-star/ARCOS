@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+
+  --bg-primary: #050608;
+  --bg-surface: rgba(14, 20, 27, 0.4);
+  --bg-panel: rgba(18, 25, 33, 0.6);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-highlight: rgba(255, 255, 255, 0.15);
+  --text-primary: #f2f5f9;
+  --text-secondary: #8b9eb0;
+  
+  /* Cybernetic Neon Accents */
+  --accent-blue: #0ea5e9;
+  --accent-cyan: #06b6d4;
+  --accent-violet: #a855f7;
+  --accent-green: #10b981;
+  --accent-orange: #f59e0b;
+  --accent-red: #ef4444;
+  
+  --shadow-panel: 0 32px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-soft: 0 14px 44px rgba(0, 0, 0, 0.3);
+  --panel-overlay: linear-gradient(180deg, rgba(20, 26, 35, 0.4), rgba(12, 17, 24, 0.8));
+  --metric-highlight: rgba(6, 182, 212, 0.12);
+}
+
+@theme inline {
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+html, body {
+  min-height: 100vh;
+}
+
+body {
+  /* Subtle deeply dark background with a modern grid pattern and colored orbs */
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.08), transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08), transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03), transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(180deg, var(--bg-primary), #0a0d12);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px, 100% 100%;
+  background-attachment: fixed;
+  color: var(--text-primary);
+  /* font-family inherit dynamically applied by next/font */
+}
+
+* {
+  border-color: var(--border-subtle);
+}
+
+::selection {
+  background: rgba(14, 165, 233, 0.25);
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  border: 2px solid transparent; 
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { 
+  background: rgba(255, 255, 255, 0.2); 
+  background-clip: padding-box; 
+}
+
+.dashboard-shell {
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.app-frame {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Glassmorphism panel base */
+.panel-surface {
+  background: var(--panel-overlay);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-muted {
+  background: rgba(18, 25, 33, 0.5);
+}
+
+.metric-flash {
+  animation: metricPulse 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.feed-entry {
+  animation: feedEntry 400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes metricPulse {
+  0% {
+    background: var(--metric-highlight);
+    transform: scale(1.02);
+    box-shadow: 0 0 24px rgba(6, 182, 212, 0.2);
+  }
+  100% {
+    background: transparent;
+    transform: scale(1);
+    box-shadow: none;
+  }
+}
+
+@keyframes feedEntry {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.4); opacity: 0; }
+}

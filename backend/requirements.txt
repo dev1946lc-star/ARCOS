@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+websockets
+web3
+python-dotenv
