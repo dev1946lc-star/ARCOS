@@ -23,7 +23,7 @@ app = FastAPI(title="ARCOS Backend API")
 # CORS — allow the Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[str(get_env("FRONTEND_ORIGIN", "http://localhost:3000"))],
+    allow_origins=["*"],  # for hackathon (later restrict)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
