@@ -39,7 +39,7 @@ export function BottomPanels() {
   if (mode === "temporal") {
     return (
       <>
-        <DraggablePanel id="bottom-time-nav" title="Time Navigation" showControls={false} className="w-[320px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) / 2 - 400, y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 200 }}>
+        <DraggablePanel id="bottom-time-nav" title="Time Navigation" showControls={false} className="w-[320px]" defaultPosition={(vp) => ({ x: vp.w / 2 - 400, y: vp.h - 200 })}>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
@@ -60,7 +60,7 @@ export function BottomPanels() {
           </div>
         </DraggablePanel>
 
-        <DraggablePanel id="bottom-event-summary" title="Event Summary" showControls={false} className="w-[320px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) / 2 - 60, y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 200 }}>
+        <DraggablePanel id="bottom-event-summary" title="Event Summary" showControls={false} className="w-[320px]" defaultPosition={(vp) => ({ x: vp.w / 2 - 60, y: vp.h - 200 })}>
           <div className="flex items-center gap-3">
             <div className="relative h-18 w-18 rounded-full bg-[conic-gradient(#3b82f6_0_19%,#a855f7_19%_33%,#f97316_33%_71%,#22d3ee_71%_89%,#22c55e_89%_100%)] p-2">
               <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-[#07111f]">
@@ -79,11 +79,11 @@ export function BottomPanels() {
           </div>
         </DraggablePanel>
 
-        <DraggablePanel id="bottom-throughput" title="Throughput Over Time" showControls={false} className="w-[320px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) / 2 + 280, y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 200 }}>
+        <DraggablePanel id="bottom-throughput" title="Throughput Over Time" showControls={false} className="w-[320px]" defaultPosition={(vp) => ({ x: vp.w / 2 + 280, y: vp.h - 200 })}>
           <ThroughputTraces />
         </DraggablePanel>
 
-        <DraggablePanel id="bottom-insights" title="System Insights" showControls={false} className="w-[320px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) / 2 + 620, y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 200 }}>
+        <DraggablePanel id="bottom-insights" title="System Insights" showControls={false} className="w-[320px]" defaultPosition={(vp) => ({ x: vp.w / 2 + 620, y: vp.h - 200 })}>
           <div className="space-y-4">
             <div className="flex items-start gap-3 text-sm text-slate-300"><ArrowUpRight className="mt-0.5 h-4 w-4 text-sky-400" /><span>Execution throughput increased 38% in the last 5 minutes</span></div>
             <div className="flex items-start gap-3 text-sm text-slate-300"><AlertTriangle className="mt-0.5 h-4 w-4 text-amber-400" /><span>Backpressure detected between Compute and Executions</span></div>
@@ -96,7 +96,7 @@ export function BottomPanels() {
 
   return (
     <>
-      <DraggablePanel id="bottom-economic" title="Economic Advantage" showControls={false} className="w-[320px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) / 2 - 340, y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 180 }}>
+      <DraggablePanel id="bottom-economic" title="Economic Advantage" showControls={false} className="w-[320px]" defaultPosition={(vp) => ({ x: vp.w / 2 - 340, y: vp.h - 180 })}>
         <div className="flex items-center gap-3">
           <div>
             <div className="text-[30px] font-semibold text-emerald-300">
@@ -110,11 +110,11 @@ export function BottomPanels() {
         </div>
       </DraggablePanel>
 
-      <DraggablePanel id="bottom-value-streams" title="Value Streams" showControls={false} className="w-[320px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) / 2, y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 180 }}>
+      <DraggablePanel id="bottom-value-streams" title="Value Streams" showControls={false} className="w-[320px]" defaultPosition={(vp) => ({ x: vp.w / 2, y: vp.h - 180 })}>
         <ThroughputTraces />
       </DraggablePanel>
 
-      <DraggablePanel id="bottom-sys-health" title="System Health" showControls={false} className="w-[320px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) / 2 + 340, y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 180 }}>
+      <DraggablePanel id="bottom-sys-health" title="System Health" showControls={false} className="w-[320px]" defaultPosition={(vp) => ({ x: vp.w / 2 + 340, y: vp.h - 180 })}>
         <div className="space-y-2 text-[11px]">
           <div className="flex items-center justify-between"><span className="text-slate-400">Nodes Online</span><span className="text-emerald-300">{liveMetrics.activeAgents || nodes.length}/102</span></div>
           <div className="flex items-center justify-between"><span className="text-slate-400">Packet Success</span><span className="text-emerald-300">{liveMetrics.backendConnected ? "99.99%" : "99.89%"}</span></div>

@@ -24,7 +24,7 @@ export function CenterPanel() {
   const agentStats = liveMetrics.leaderboard.find((a: any) => a.id === selectedNode.id) || { personality: selectedNode.type, total_profit: 0 }
 
   return (
-    <DraggablePanel id="center-agent-snapshot" className="w-[360px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) / 2 - 180, y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 300 }}>
+    <DraggablePanel id="center-agent-snapshot" className="w-[360px]" defaultPosition={(vp) => ({ x: vp.w / 2 - 180, y: vp.h - 300 })}>
       <div className="flex items-start justify-between">
         <div>
           <div className="text-[9px] uppercase tracking-[0.16em] text-slate-500">Agent Snapshot</div>

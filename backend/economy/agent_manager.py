@@ -12,6 +12,19 @@ MAX_COMPUTE_AGENTS = get_int("ARCOS_MAX_COMPUTE_AGENTS", 10)
 
 def _compute_agent_accounts():
     configured_keys = list(validate_config()["config"]["ECONOMY"].get("compute_agent_keys", []))
+    
+    parsed_wallets = []
+    parsed_keys = []
+    
+    for item in configured_keys:
+        if ":" in item:
+            # Format is agent_id:wallet_address
+            parts = item.split(":", 1)
+            parsed_wallets.append(parts[1])
+            parsed_keys.append(parts[0])
+        else:
+            parsed_keys.append(item)
+            
     fallback_keys = [
         str(get_env("ARCOS_COMPUTE_AGENT_PK_1", "") or ""),
         str(get_env("ARCOS_COMPUTE_AGENT_PK_2", "") or ""),
@@ -22,8 +35,11 @@ def _compute_agent_accounts():
         str(get_env("ARCOS_COMPUTE_AGENT_PK_7", "") or ""),
         str(get_env("ARCOS_COMPUTE_AGENT_PK_8", "") or ""),
     ]
-    private_keys = configured_keys + fallback_keys[len(configured_keys):]
-    wallets = [
+    
+    # Use parsed keys first, then fill with fallbacks
+    all_keys = parsed_keys + fallback_keys[len(parsed_keys):]
+    
+    hardhat_wallets = [
         "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
         "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
         "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
@@ -33,7 +49,11 @@ def _compute_agent_accounts():
         "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
         "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     ]
-    return list(zip(wallets, private_keys, strict=False))
+    
+    # Use parsed wallets first, then fill with hardhat wallets
+    final_wallets = parsed_wallets + hardhat_wallets[len(parsed_wallets):]
+    
+    return list(zip(final_wallets, all_keys, strict=False))
 
 class AgentManager:
     # Hardhat test accounts (indices 2-19 are available)

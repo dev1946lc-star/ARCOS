@@ -123,3 +123,7 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+
+# Circle Dev Project
+dev-controlled-projects/output/
+dev-controlled-projects/node_modules/

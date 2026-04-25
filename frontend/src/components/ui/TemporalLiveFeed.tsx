@@ -84,7 +84,7 @@ export function TemporalLiveFeed() {
       id="temporal-live-feed"
       title="Temporal Live Feed"
       className="w-[960px] max-w-[calc(100vw-64px)]"
-      defaultPosition={{ x: (typeof window !== "undefined" ? window.innerWidth : 1280) / 2 - 480, y: 112 }}
+      defaultPosition={(vp) => ({ x: vp.w / 2 - 480, y: 112 })}
     >
       <div className="flex flex-col overflow-hidden bg-transparent">
         <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">

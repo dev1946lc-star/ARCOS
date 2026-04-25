@@ -38,7 +38,7 @@ export function ControlPanel() {
   }
 
   return (
-    <DraggablePanel id="control-panel" title="System Controls" className="w-[280px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 320, y: 80 }}>
+    <DraggablePanel id="control-panel" title="System Controls" className="w-[280px]" defaultPosition={(vp) => ({ x: vp.w - 640, y: 80 })}>
       <div className="space-y-3">
         <div className="rounded-[14px] border border-white/6 bg-white/[0.03] p-3">
           <div className="mb-2 text-[11px] font-medium text-white">Load Injector</div>

@@ -6,11 +6,20 @@ import { GripHorizontal, Minimize2, Maximize2, X, RotateCcw } from "lucide-react
 import { useArcosSimStore } from "@/lib/store/arcos-store"
 import { cn } from "@/lib/utils"
 
+export type PositionValue = { x: number; y: number }
+export type PositionInput = PositionValue | ((vp: { w: number; h: number }) => PositionValue)
+
+const SSR_VP = { w: 1440, h: 900 }
+
+function resolvePos(input: PositionInput, vp: { w: number; h: number }): PositionValue {
+  return typeof input === "function" ? input(vp) : input
+}
+
 interface DraggablePanelProps {
   id: string
   title?: string
   children: ReactNode
-  defaultPosition?: { x: number; y: number }
+  defaultPosition?: PositionInput
   className?: string
   showControls?: boolean
   constrainToViewport?: boolean
@@ -31,8 +40,19 @@ export function DraggablePanel({
   const [collapsed, setCollapsed] = useState(saved?.collapsed ?? false)
   const constraintRef = useRef<HTMLDivElement>(null)
 
-  const initialX = saved?.x ?? defaultPosition.x
-  const initialY = saved?.y ?? defaultPosition.y
+  const [computedDefault, setComputedDefault] = useState<PositionValue>(() =>
+    resolvePos(defaultPosition, SSR_VP)
+  )
+
+  useEffect(() => {
+    if (typeof defaultPosition === "function") {
+      setComputedDefault(defaultPosition({ w: window.innerWidth, h: window.innerHeight }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const initialX = saved?.x ?? computedDefault.x
+  const initialY = saved?.y ?? computedDefault.y
 
   const handleDragEnd = useCallback(
     (_: unknown, info: { point: { x: number; y: number } }) => {

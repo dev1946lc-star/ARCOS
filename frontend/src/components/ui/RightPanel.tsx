@@ -30,7 +30,7 @@ export function RightPanel() {
   if (mode === "temporal") {
     return (
       <>
-        <DraggablePanel id="right-event-details" title="Event Details" className="w-[300px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 320, y: 80 }}>
+        <DraggablePanel id="right-event-details" title="Event Details" className="w-[300px]" defaultPosition={(vp) => ({ x: vp.w - 320, y: 80 })}>
           <div className="rounded-[14px] border border-orange-400/15 bg-orange-500/[0.06] p-2.5">
             <div className="flex items-center justify-between">
               <div className="text-[11px] font-medium text-white">Trade Execution Confirmed</div>
@@ -47,7 +47,7 @@ export function RightPanel() {
           </div>
         </DraggablePanel>
 
-        <DraggablePanel id="right-flow-trace" title="Flow Trace" className="w-[300px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 320, y: 320 }}>
+        <DraggablePanel id="right-flow-trace" title="Flow Trace" className="w-[300px]" defaultPosition={(vp) => ({ x: vp.w - 320, y: 320 })}>
           <div className="space-y-3">
             {flowTrace.map(({ title, time, color, Icon }) => (
               <div key={title} className="flex items-start gap-3">
@@ -68,7 +68,7 @@ export function RightPanel() {
 
   return (
     <>
-      <DraggablePanel id="right-live-tps" title="Live TPS" className="w-[300px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 320, y: 80 }}>
+      <DraggablePanel id="right-live-tps" title="Live TPS" className="w-[300px]" defaultPosition={(vp) => ({ x: vp.w - 320, y: 80 })}>
         <div className="flex items-baseline justify-between">
           <div className="text-[32px] font-semibold leading-none text-white">
             {liveMetrics.backendConnected ? Math.round(liveMetrics.tps).toLocaleString() : "4,820"}
@@ -84,7 +84,7 @@ export function RightPanel() {
         </div>
       </DraggablePanel>
 
-      <DraggablePanel id="right-latency" title="Latency" className="w-[300px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 320, y: 220 }}>
+      <DraggablePanel id="right-latency" title="Latency" className="w-[300px]" defaultPosition={(vp) => ({ x: vp.w - 320, y: 220 })}>
         <div className="flex items-center justify-between">
           <div className="text-[26px] font-semibold leading-none text-white">
             {liveMetrics.backendConnected ? Math.round(liveMetrics.latency) : 28} ms
@@ -96,7 +96,7 @@ export function RightPanel() {
         </svg>
       </DraggablePanel>
 
-      <DraggablePanel id="right-backpressure" title="Backpressure" className="w-[300px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 320, y: 380 }}>
+      <DraggablePanel id="right-backpressure" title="Backpressure" className="w-[300px]" defaultPosition={(vp) => ({ x: vp.w - 320, y: 380 })}>
         <div className="mb-2 flex items-center justify-between text-[9px] uppercase tracking-[0.16em] text-slate-500">
           <span>Status</span>
           {liveMetrics.backendConnected ? (
@@ -118,7 +118,7 @@ export function RightPanel() {
         </div>
       </DraggablePanel>
 
-      <DraggablePanel id="right-event-feed" title="Event Feed" className="w-[300px]" defaultPosition={{ x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 320, y: 550 }}>
+      <DraggablePanel id="right-event-feed" title="Event Feed" className="w-[300px]" defaultPosition={(vp) => ({ x: vp.w - 320, y: 550 })}>
         <div className="space-y-2">
           {liveMetrics.recentEvents.slice(0, 4).map((item: any, i) => (
             <div key={i} className="flex gap-3">

@@ -341,7 +341,16 @@ class ComputeAgent:
                             total_chunks=total_chunks,
                             amount=release_amount,
                         )
-                        if chunk_tx.get("status") != "success":
+                        if chunk_tx.get("status") == "success":
+                            self._emit("agent_payment", {
+                                "task_id": job["task_id"],
+                                "action": "payment",
+                                "amount": release_amount,
+                                "chunk": f"{chunk_index}/{total_chunks}",
+                                "tx_hash": chunk_tx.get("tx_hash"),
+                            })
+                            logger.info(f"{self.agent_id} released payment chunk {chunk_index}/{total_chunks}: {release_amount} microUSDC")
+                        else:
                             raise ValueError(chunk_tx.get("reason", "partial_release_failed"))
 
                     result_payload = f"Result for: {job['description']}"
