@@ -34,6 +34,21 @@ class Predictor:
         cache_size: int = 64,
         memory_size: int = 32,
     ) -> None:
+        # Auto-detect trained models if not provided
+        if not model_path:
+            default_model_dir = Path(__file__).parent.parent / "models"
+            if default_model_dir.exists():
+                trained_model = default_model_dir / "acceptance_xgboost.json"
+                if trained_model.exists():
+                    model_path = trained_model
+        
+        if not feature_schema_path:
+            default_model_dir = Path(__file__).parent.parent / "models"
+            if default_model_dir.exists():
+                trained_schema = default_model_dir / "acceptance_schema.json"
+                if trained_schema.exists():
+                    feature_schema_path = trained_schema
+        
         self.model_path = Path(model_path) if model_path else None
         self.feature_schema_path = Path(feature_schema_path) if feature_schema_path else None
         self.model: Any | None = None

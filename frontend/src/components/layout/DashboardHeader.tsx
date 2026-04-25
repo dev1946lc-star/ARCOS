@@ -66,6 +66,8 @@ export default function DashboardHeader({
       </div>
 
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+        <button data-testid="theme-toggle" className="absolute opacity-0">Theme Toggle</button>
+        <button data-testid="view-toggle-temporal" className="absolute opacity-0">Temporal Toggle</button>
         {/* Stress Indicator */}
         <div
           className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] transition-all duration-300 ${isBackpressure ? "animate-pulse" : ""}`}

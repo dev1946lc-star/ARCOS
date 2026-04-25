@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const API_BASE = "http://localhost:8000";
+import { fetchEconomicsProof } from "@/lib/api";
 
 interface EconomicsProof {
   transactions: number;
@@ -27,9 +26,7 @@ export default function EconomicsProofBanner() {
   useEffect(() => {
     const fetchProof = async () => {
       try {
-        const res = await fetch(`${API_BASE}/economics/proof`);
-        if (!res.ok) return;
-        const data = await res.json();
+        const data = await fetchEconomicsProof();
         setProof(data);
       } catch {
         // Silent catch

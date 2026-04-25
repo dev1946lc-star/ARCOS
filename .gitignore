@@ -82,3 +82,45 @@ Thumbs.db
 *.tmp
 *.temp
 .cache/
+
+# Python testing & linting
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.pyre/
+.tox/
+.coverage.*
+htmlcov/
+
+# IDE Extensions & Settings
+.pylintrc
+.flake8
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+
+# Hardhat & Blockchain
+contracts/node_modules/
+contracts/coverage/
+contracts/.solcover.js
+
+# Backup & Lock files
+*.bak
+*.backup
+*~
+yarn.lock
+package-lock.json
+
+# Runtime artifacts
+*.pyc
+__pycache__/
+.eggs/
+*.egg-info/
+dist/
+build/

@@ -1,0 +1,44 @@
+{
+  "training_date": "2026-04-25T20:31:34.355945",
+  "models": {
+    "acceptance": {
+      "algorithm": "XGBoost (tuned)",
+      "accuracy": 0.97,
+      "f1_score": 0.9701291307270079,
+      "samples": 8000,
+      "model_path": "C:\\Users\\anish\\Downloads\\air\\site 1\\arcos-Agentic Economy on Arc\\backend\\models\\acceptance_xgboost.json",
+      "schema_path": "C:\\Users\\anish\\Downloads\\air\\site 1\\arcos-Agentic Economy on Arc\\backend\\models\\acceptance_schema.json"
+    },
+    "price": {
+      "algorithm": "XGBoost Regressor (improved)",
+      "mae": 0.0643175993073386,
+      "rmse": 0.09036465970652424,
+      "r2_score": 0.9798207775150426,
+      "samples": 8000,
+      "model_path": "C:\\Users\\anish\\Downloads\\air\\site 1\\arcos-Agentic Economy on Arc\\backend\\models\\price_xgboost_regressor.json",
+      "schema_path": "C:\\Users\\anish\\Downloads\\air\\site 1\\arcos-Agentic Economy on Arc\\backend\\models\\price_schema.json"
+    },
+    "success": {
+      "algorithm": "XGBoost (tuned with RandomizedSearchCV)",
+      "accuracy": 0.655,
+      "f1_score": 0.7587412587412588,
+      "precision": 0.7436600411240576,
+      "recall": 0.7744468236973591,
+      "auc_roc": 0.6334695346395789,
+      "best_params": {
+        "subsample": 0.9,
+        "reg_lambda": 1.0,
+        "reg_alpha": 1.0,
+        "n_estimators": 300,
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "gamma": 0,
+        "colsample_bytree": 0.7
+      },
+      "samples": 8000,
+      "model_path": "C:\\Users\\anish\\Downloads\\air\\site 1\\arcos-Agentic Economy on Arc\\backend\\models\\success_xgboost.json",
+      "schema_path": "C:\\Users\\anish\\Downloads\\air\\site 1\\arcos-Agentic Economy on Arc\\backend\\models\\success_schema.json"
+    }
+  },
+  "models_directory": "C:\\Users\\anish\\Downloads\\air\\site 1\\arcos-Agentic Economy on Arc\\backend\\models"
+}
