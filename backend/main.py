@@ -13,6 +13,11 @@ load_environment()
 
 app = FastAPI(title="ARCOS Backend API")
 
+@app.get("/health")
+@app.get("/")
+def health_check():
+    return {"status": "ok", "timestamp": time.time()}
+
 # CORS — allow the Next.js frontend
 app.add_middleware(
     CORSMiddleware,
