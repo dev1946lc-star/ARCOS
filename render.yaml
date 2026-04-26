@@ -4,9 +4,9 @@ services:
     rootDirectory: backend
     runtime: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn -w 1 -k uvicorn.workers.UvicornWorker --timeout 120 --bind 0.0.0.0:$PORT main:app"
+    startCommand: "gunicorn -w 1 -k uvicorn.workers.UvicornWorker --timeout 300 --bind 0.0.0.0:$PORT main:app"
     plan: free
-    healthCheckPath: /
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.12
@@ -16,3 +16,9 @@ services:
         value: memory
       - key: USE_ML_MODEL
         value: "false"
+      - key: ARCOS_MAX_COMPUTE_AGENTS
+        value: "4"
+      - key: LOG_LEVEL
+        value: "WARNING"
+      - key: ARCOS_DEMAND_THRESHOLD
+        value: "2.5"

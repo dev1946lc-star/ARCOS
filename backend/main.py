@@ -9,9 +9,6 @@ import time
 from core.config import env_status, get_env, get_int, load_environment
 load_environment()
 
-from core.config import env_status, get_env, get_int, load_environment
-load_environment()
-
 # Note: Heavy imports moved inside functions or startup_event to speed up boot on Render
 
 app = FastAPI(title="ARCOS Backend API")
@@ -35,7 +32,7 @@ async def startup_event():
     # ✅ Background ARCOS runner (NON-BLOCKING)
     async def run_arcos():
         """Initializes and runs the simulation after a short delay to ensure server stability."""
-        await asyncio.sleep(2)  # allow server to start first
+        await asyncio.sleep(8)  # increased delay for Render stability
         try:
             await sim.start_simulation()
         except Exception as e:
