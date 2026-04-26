@@ -321,8 +321,7 @@ class ResearchAgent:
                         "profit_estimation": intelligence.get("economic"),
                     },
                 )
-            logger.info(f"{self.agent_id} created job: {job['task_id']}")
-            print(f"\033[96m[ARCOS ECONOMY LOG] {self.agent_id} created job: {job['description']}\033[0m")
+            logger.debug(f"{self.agent_id} created job: {job['task_id']}")
             self.market.add_job(job)
             self._emit("job_created", {
                 "task_id": job["task_id"],

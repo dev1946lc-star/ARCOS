@@ -99,7 +99,7 @@ class AgentManager:
 
         # Launch in current event loop
         asyncio.get_event_loop().create_task(agent.run())
-        print(f"\033[94m[ARCOS ECONOMY LOG] Spawning {agent_id} (wallet: {wallet[:10]}...)\033[0m")
+        logger.info(f"Spawning {agent_id} (wallet: {wallet[:10]}...)")
         logger.info(f"[ARCOS] Spawned {agent_id}")
 
         # Update the shared agent registry so the /agents API sees new agents
@@ -125,7 +125,7 @@ class AgentManager:
             ratio = pending / max(active, 1)
 
             if ratio >= DEMAND_THRESHOLD:
-                print(f"\033[93m[ARCOS ECONOMY LOG] Demand spike detected! Ratio: {ratio:.1f} (Pending: {pending})\033[0m")
+                logger.warning(f"Demand spike detected! Ratio: {ratio:.1f} (Pending: {pending})")
                 self.spawn_compute_agent()
             else:
                 logger.debug(f"[ARCOS] Demand normal. Pending: {pending}, Agents: {active}, Ratio: {ratio:.1f}")

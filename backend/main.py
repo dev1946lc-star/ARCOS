@@ -8,6 +8,12 @@ import time
 
 from core.config import env_status, get_env, get_int, load_environment
 load_environment()
+import logging
+import os
+logging.basicConfig(
+    level=getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO),
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # Note: Heavy imports moved inside functions or startup_event to speed up boot on Render
 

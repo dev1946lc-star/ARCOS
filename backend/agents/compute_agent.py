@@ -349,7 +349,7 @@ class ComputeAgent:
                                 "chunk": f"{chunk_index}/{total_chunks}",
                                 "tx_hash": chunk_tx.get("tx_hash"),
                             })
-                            logger.info(f"{self.agent_id} released payment chunk {chunk_index}/{total_chunks}: {release_amount} microUSDC")
+                            logger.debug(f"{self.agent_id} released payment chunk {chunk_index}/{total_chunks}: {release_amount} microUSDC")
                         else:
                             raise ValueError(chunk_tx.get("reason", "partial_release_failed"))
 
@@ -381,7 +381,7 @@ class ComputeAgent:
                             profit_trend=self.profit_trend,
                         )
                     logger.info(f"{self.agent_id} completed job: {job['task_id']}")
-                    print(f"\033[92m[ARCOS ECONOMY LOG] {self.agent_id} completed job: {job['description']}\033[0m")
+                    self.market.complete_job(job, "success")
                     self._emit("job_completed", {
                         "task_id": job["task_id"],
                         "description": job["description"],
