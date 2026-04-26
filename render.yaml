@@ -17,8 +17,10 @@ services:
       - key: USE_ML_MODEL
         value: "false"
       - key: ARCOS_MAX_COMPUTE_AGENTS
-        value: "4"
+        value: "3"
       - key: LOG_LEVEL
         value: "WARNING"
       - key: ARCOS_DEMAND_THRESHOLD
-        value: "2.5"
+        value: "3.5"
+      - key: ARCOS_RESEARCH_INTERVAL
+        value: "5.0"

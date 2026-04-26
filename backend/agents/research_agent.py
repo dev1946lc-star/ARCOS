@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import os
 from collections import deque
 import random
 import time
@@ -268,8 +269,9 @@ class ResearchAgent:
         logger.info(f"{self.agent_id} ({self.wallet[:10]}...) starting up.")
         self._emit("agent_spawned", {"wallet": self.wallet, "role": "research"})
 
+        interval = float(os.environ.get("ARCOS_RESEARCH_INTERVAL", "3.0"))
         while self.running:
-            await asyncio.sleep(random.uniform(0.25, 0.6))
+            await asyncio.sleep(random.uniform(interval, interval * 1.5))
             required_compute = random.randint(2, 8)
             description = random.choice(JOB_DESCRIPTIONS)
             price_offer = random.randint(1_200, 8_500)

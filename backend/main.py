@@ -37,7 +37,7 @@ async def startup_event():
     # ✅ Background ARCOS runner (NON-BLOCKING)
     async def run_arcos():
         """Initializes and runs the simulation after a short delay to ensure server stability."""
-        await asyncio.sleep(8)  # increased delay for Render stability
+        await asyncio.sleep(15)  # increased delay for Render stability
         try:
             await sim.start_simulation()
         except Exception as e:
