@@ -9,14 +9,10 @@ import time
 from core.config import env_status, get_env, get_int, load_environment
 load_environment()
 
-from analysis.gas_model import gas_model
-from economy.competition_engine import competition_engine
-from services.payment_service import get_balance, deposit, pay
-import economy.simulation_engine as sim
-from economy.economic_engine import economic_engine
-from economy.event_bus import event_bus
-from ledger.transaction_store import transaction_store
-from payments.wallet_service import wallet_service
+from core.config import env_status, get_env, get_int, load_environment
+load_environment()
+
+# Note: Heavy imports moved inside functions or startup_event to speed up boot on Render
 
 app = FastAPI(title="ARCOS Backend API")
 
@@ -30,18 +26,21 @@ app.add_middleware(
 )
 
 
-# ✅ Background ARCOS runner (NON-BLOCKING)
-async def run_arcos():
-    """Initializes and runs the simulation after a short delay to ensure server stability."""
-    await asyncio.sleep(2)  # allow server to start first
-    try:
-        await sim.start_simulation()
-    except Exception as e:
-        print(f"🚨 ARCOS simulation error: {e}")
-
 # ✅ Startup hook
 @app.on_event("startup")
 async def startup_event():
+    # Lazy import to speed up initial server bind
+    import economy.simulation_engine as sim
+    
+    # ✅ Background ARCOS runner (NON-BLOCKING)
+    async def run_arcos():
+        """Initializes and runs the simulation after a short delay to ensure server stability."""
+        await asyncio.sleep(2)  # allow server to start first
+        try:
+            await sim.start_simulation()
+        except Exception as e:
+            print(f"🚨 ARCOS simulation error: {e}")
+
     asyncio.create_task(run_arcos())  # critical fix: non-blocking startup
 
 
@@ -168,17 +167,18 @@ def _scalability_score(
 
 # ── REST Endpoints ──────────────────────────────────────────
 
-# ✅ Lightweight health checks for Render
 @app.get("/")
 def read_root():
     return {"status": "ok", "message": "ARCOS API"}
 
 @app.get("/health")
 def health_check():
+    import time
     return {"status": "healthy", "timestamp": time.time()}
 
 @app.get("/balance/{wallet}")
 def read_balance(wallet: str):
+    from services.payment_service import get_balance
     try:
         balance = get_balance(wallet)
         return {"wallet": wallet, "balance": balance}
@@ -187,6 +187,7 @@ def read_balance(wallet: str):
 
 @app.post("/deposit")
 def make_deposit(req: DepositRequest):
+    from services.payment_service import deposit
     try:
         tx_hash = deposit(req.sender, req.private_key, req.amount)
         return {"transaction_hash": tx_hash, "amount": req.amount}
@@ -195,6 +196,7 @@ def make_deposit(req: DepositRequest):
 
 @app.post("/pay")
 def make_payment(req: PayRequest):
+    from services.payment_service import pay
     try:
         tx_hash = pay(req.sender, req.private_key, req.recipient, req.amount)
         return {"transaction_hash": tx_hash, "amount": req.amount}
@@ -204,11 +206,18 @@ def make_payment(req: PayRequest):
 @app.get("/agents")
 def list_agents():
     """Return the current agent registry."""
+    import economy.simulation_engine as sim
     return {"agents": sim.agent_registry}
 
 @app.get("/stats")
 def get_stats():
     """Return aggregate simulation stats."""
+    import economy.simulation_engine as sim
+    from economy.event_bus import event_bus
+    from ledger.transaction_store import transaction_store
+    from economy.economic_engine import economic_engine
+    from economy.competition_engine import competition_engine
+
     stats = event_bus.get_stats()
     transaction_stats = transaction_store.summary_stats()
     stats["active_agents"] = len(sim.agent_registry)
@@ -245,6 +254,7 @@ def get_stats():
 
 @app.get("/transactions")
 def get_transactions():
+    from ledger.transaction_store import transaction_store
     transactions = transaction_store.list_transactions()
     return {
         "transactions": transactions,
@@ -254,15 +264,23 @@ def get_transactions():
 
 @app.get("/transactions/flow/{job_id}")
 def get_transaction_flow(job_id: str):
+    from ledger.transaction_store import transaction_store
     flow = transaction_store.get_job_flow(job_id)
     return {"job_id": job_id, "flow": flow}
 
 @app.get("/transactions/replay/{job_id}")
 def replay_transaction_flow(job_id: str):
+    from ledger.transaction_store import transaction_store
     return transaction_store.replay_job(job_id)
 
 @app.get("/economics/summary")
 def get_economics_summary():
+    import economy.simulation_engine as sim
+    from ledger.transaction_store import transaction_store
+    from economy.event_bus import event_bus
+    from economy.economic_engine import economic_engine
+    from economy.competition_engine import competition_engine
+
     transactions = transaction_store.list_transactions()
     completed_jobs = list(getattr(sim.market_ref, "completed_jobs", [])) if sim.market_ref else []
     successful = [tx for tx in transactions if tx.get("status") == "success"]
@@ -333,6 +351,8 @@ def get_economics_summary():
 
 @app.get("/economics/comparison")
 def get_economic_comparison():
+    from ledger.transaction_store import transaction_store
+    from analysis.gas_model import gas_model
     stats = transaction_store.summary_stats()
     comparison = gas_model.compare(
         transactions=int(stats.get("total_transactions", 0)),
@@ -342,6 +362,7 @@ def get_economic_comparison():
 
 @app.get("/economics/proof")
 def get_economics_proof():
+    from ledger.transaction_store import transaction_store
     stats = transaction_store.summary_stats()
     tx_count = max(1, int(stats.get("total_transactions", 0)))
     avg_cost_per_tx = 0.00005  # Arc batch fee per nanopayment
@@ -361,6 +382,9 @@ def get_economics_proof():
 
 @app.get("/agents/leaderboard")
 def get_agents_leaderboard():
+    import economy.simulation_engine as sim
+    from ledger.transaction_store import transaction_store
+    from economy.competition_engine import competition_engine
     compute_agents = getattr(sim.manager_ref, "compute_agents", []) if sim.manager_ref else []
     leaderboard = []
     for agent in compute_agents:
@@ -385,11 +409,14 @@ def get_agents_leaderboard():
 @app.get("/events")
 def get_events():
     """Return recent events for initial page load."""
+    from economy.event_bus import event_bus
     return {"events": event_bus.get_recent_events(100)}
 
 @app.post("/spike")
 async def trigger_load_spike():
     """Inject a burst of jobs to demonstrate ARCOS autonomous scaling."""
+    import economy.simulation_engine as sim
+    from economy.event_bus import event_bus
     if not sim.market_ref:
         raise HTTPException(status_code=503, detail="Simulation not running")
 
@@ -432,6 +459,9 @@ async def trigger_load_spike():
 
 @app.post("/demo/story")
 async def demo_story():
+    import economy.simulation_engine as sim
+    from ledger.transaction_store import transaction_store
+    from economy.event_bus import event_bus
     if not sim.market_ref:
         raise HTTPException(status_code=503, detail="Simulation not running")
 
@@ -525,6 +555,8 @@ async def demo_story():
 
 @app.get("/system/persistence")
 def get_system_persistence():
+    from ledger.transaction_store import transaction_store
+    from economy.event_bus import event_bus
     performance = transaction_store.performance_metrics(event_log=event_bus.get_recent_events(5000))
     return _augment_persistence_metrics(
         transaction_store.persistence_metrics(refresh=True),
@@ -533,6 +565,8 @@ def get_system_persistence():
 
 @app.get("/system/performance")
 def get_system_performance():
+    from ledger.transaction_store import transaction_store
+    from economy.event_bus import event_bus
     return transaction_store.performance_metrics(event_log=event_bus.get_recent_events(5000))
 
 @app.get("/system/validation")
@@ -541,6 +575,7 @@ def get_system_validation():
 
 @app.post("/system/test/overload")
 async def post_system_test_overload(request: OverloadTestRequest):
+    from ledger.transaction_store import transaction_store
     started_at = asyncio.get_running_loop().time()
     result = await asyncio.to_thread(
         transaction_store.simulate_overload,
@@ -597,6 +632,8 @@ async def post_system_test_overload(request: OverloadTestRequest):
 
 @app.get("/system/health")
 def get_system_health():
+    import economy.simulation_engine as sim
+    from ledger.transaction_store import transaction_store
     sample_start = time.perf_counter()
     event_loop_latency = (time.perf_counter() - sample_start) * 1000
     tx_stats = transaction_store.summary_stats()
@@ -642,6 +679,7 @@ def get_system_health():
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    from economy.event_bus import event_bus
     await websocket.accept()
     queue = event_bus.subscribe()
     try:
@@ -653,6 +691,7 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception:
         pass
     finally:
+        from economy.event_bus import event_bus
         event_bus.unsubscribe(queue)
 
 
