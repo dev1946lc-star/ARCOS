@@ -6,10 +6,7 @@ from collections import OrderedDict, deque
 from pathlib import Path
 from typing import Any
 
-try:
-    import joblib  # type: ignore
-except Exception:  # pragma: no cover - optional dependency
-    joblib = None
+# joblib imported lazily in load()
 
 
 class Predictor:
@@ -60,6 +57,11 @@ class Predictor:
 
     def load(self) -> None:
         self._load_attempted = True
+        try:
+            import joblib
+        except ImportError:
+            joblib = None
+
         if not self.model_path or not self.feature_schema_path or joblib is None:
             return
         if not self.model_path.exists() or not self.feature_schema_path.exists():

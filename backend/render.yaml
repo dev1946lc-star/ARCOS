@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: arcos-backend
+    runtime: python
+    # This file is now in the backend/ directory
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: SETTLEMENT_MODE
+        value: simulated
+      - key: DB_MODE
+        value: memory
+      - key: USE_ML_MODEL
+        value: "false"

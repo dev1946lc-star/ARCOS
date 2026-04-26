@@ -30,9 +30,19 @@ app.add_middleware(
 )
 
 
+# ✅ Background ARCOS runner (NON-BLOCKING)
+async def run_arcos():
+    """Initializes and runs the simulation after a short delay to ensure server stability."""
+    await asyncio.sleep(2)  # allow server to start first
+    try:
+        await sim.start_simulation()
+    except Exception as e:
+        print(f"🚨 ARCOS simulation error: {e}")
+
+# ✅ Startup hook
 @app.on_event("startup")
 async def startup_event():
-    asyncio.create_task(sim.start_simulation())
+    asyncio.create_task(run_arcos())  # critical fix: non-blocking startup
 
 
 # ── Request Models ──────────────────────────────────────────
@@ -158,9 +168,14 @@ def _scalability_score(
 
 # ── REST Endpoints ──────────────────────────────────────────
 
+# ✅ Lightweight health checks for Render
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the ARCOS API", "status": "running"}
+    return {"status": "ok", "message": "ARCOS API"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "timestamp": time.time()}
 
 @app.get("/balance/{wallet}")
 def read_balance(wallet: str):
@@ -642,4 +657,12 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=get_int("PORT", 8000))
+    import os
+    # ✅ Robust port handling for Render
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=port,
+        reload=False
+    )

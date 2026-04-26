@@ -11,17 +11,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-try:
-    import joblib
-    JOBLIB_AVAILABLE = True
-except ImportError:
-    JOBLIB_AVAILABLE = False
-
-try:
-    import xgboost as xgb
-    XGBOOST_AVAILABLE = True
-except ImportError:
-    XGBOOST_AVAILABLE = False
+# Heavy ML imports moved inside methods to speed up startup
+JOBLIB_AVAILABLE = True # Assume available if in requirements
+XGBOOST_AVAILABLE = True
 
 
 class ModelManager:
@@ -45,9 +37,20 @@ class ModelManager:
         if not self.models_dir.exists():
             return
         
+        # Local imports for performance
+        try:
+            import xgboost as xgb
+        except ImportError:
+            xgb = None
+            
+        try:
+            import joblib
+        except ImportError:
+            joblib = None
+        
         # Load acceptance model
         acceptance_path = self.models_dir / "acceptance_xgboost.json"
-        if acceptance_path.exists() and XGBOOST_AVAILABLE:
+        if acceptance_path.exists() and xgb:
             try:
                 self.acceptance_model = xgb.Booster()
                 self.acceptance_model.load_model(str(acceptance_path))
@@ -57,7 +60,7 @@ class ModelManager:
         
         # Load price model
         price_path = self.models_dir / "price_logistic_regression.pkl"
-        if price_path.exists() and JOBLIB_AVAILABLE:
+        if price_path.exists() and joblib:
             try:
                 self.price_model = joblib.load(price_path)
                 print("✓ Loaded price predictor")
@@ -66,7 +69,7 @@ class ModelManager:
         
         # Load price scaler
         scaler_path = self.models_dir / "price_scaler.pkl"
-        if scaler_path.exists() and JOBLIB_AVAILABLE:
+        if scaler_path.exists() and joblib:
             try:
                 self.price_scaler = joblib.load(scaler_path)
             except Exception as e:
@@ -74,7 +77,7 @@ class ModelManager:
         
         # Load success model
         success_path = self.models_dir / "success_xgboost.json"
-        if success_path.exists() and XGBOOST_AVAILABLE:
+        if success_path.exists() and xgb:
             try:
                 self.success_model = xgb.Booster()
                 self.success_model.load_model(str(success_path))
